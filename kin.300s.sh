@@ -9,6 +9,16 @@
 # <bitbar.image>https://raw.githubusercontent.com/udzura/bitbar-kinnosuke-cli/master/screemshot.png</bitbar.image>
 # <bitbar.dependencies>bash</bitbar.dependencies>
 # <bitbar.abouturl>https://github.com/udzura/bitbar-kinnosuke-cli</bitbar.abouturl>
+function get_darkmode_state {
+state=$(osascript <<EOD
+tell application "System Events" to tell appearance preferences
+	get properties
+	set currentValue to dark mode
+		return currentValue
+end tell
+EOD
+)
+}
 
 export PATH=$PATH:/usr/local/bin
 if ! which kinnosuke-clocking-cli >/dev/null; then
@@ -68,7 +78,13 @@ fi
 
 cin=$(echo $res | awk '{print $1}')
 cout=$(echo $res | awk '{print $2}')
+
+get_darkmode_state;
+if "$state" is true; then
+color=white
+else
 color=black
+fi
 
 if [ "$cin" = "<notyet>" ]; then
     color=red
